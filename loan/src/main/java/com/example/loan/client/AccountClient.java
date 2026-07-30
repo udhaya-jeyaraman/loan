@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @FeignClient(
-        name="account-service";
+        name="account-service",
         url="${application.config.account-url}"
 )
-public interface AccountCLient {
+public interface AccountClient {
     @GetMapping("/{account-id}")
     Optional<AccountResponse> findAccountById(@PathVariable("account-id") Long accountId);
 

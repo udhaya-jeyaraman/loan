@@ -1,13 +1,21 @@
 package com.example.loan.service;
 
 import com.example.loan.Repository.LoanRepository;
+import com.example.loan.client.AccountClient;
+import com.example.loan.client.AuthClient;
 import com.example.loan.dto.LoanRequestDto;
 import com.example.loan.dto.LoanResponseDto;
+import com.example.loan.dto.PaymentRequestDto;
+import com.example.loan.exception.LoanServiceException;
+import com.example.loan.exception.ResourceNotFoundException;
+import com.example.loan.model.Loan;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
 
-public class LoanServiceImpl {
+public class LoanServiceImpl implements LoanService {
 
     private static final BigDecimal INTEREST_RATE = new BigDecimal("0.02"); // 2% monthly interest rate
 
@@ -15,17 +23,16 @@ public class LoanServiceImpl {
     private LoanRepository loanRepository;
 
     @Autowired
-    private  AuthClient authClient;
+    private AuthClient authClient;
 
     @Autowired
-    private  AccountClient accountClient;
+    private AccountClient accountClient;
 
     @Override
     public LoanResponseDto applyForLoan(LoanRequestDto loanRequestDto) {
         // Check if customer exists
         authClient.findCustomerById(loanRequestDto.getAuthId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-
         // Check if account exists
         accountClient.findAccountById(loanRequestDto.getAccountId())
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
